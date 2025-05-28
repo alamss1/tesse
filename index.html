@@ -50,6 +50,7 @@
       transition: 0.2s;
       white-space: nowrap;
       text-align: center;
+      user-select: none;
     }
     .toggle-btn.active {
       background-color: #28a745;
@@ -69,6 +70,7 @@
     #status {
       text-align: center;
       margin-top: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -76,8 +78,8 @@
   <div class="container">
     <h2>Absen Khusus Puskesmas</h2>
     <form id="absenForm">
-      <input type="text" name="id" id="inputId" readonly />
-      <input type="text" name="nama" id="inputNama" readonly />
+      <input type="text" name="id" id="inputId" readonly placeholder="ID" />
+      <input type="text" name="nama" id="inputNama" readonly placeholder="Nama" />
 
       <div class="toggle-group">
         <div id="btnMasuk" class="toggle-btn">Tidak Absen Masuk</div>
@@ -93,7 +95,7 @@
   </div>
 
   <script>
-    // Fungsi ambil query params
+    // Ambil id & nama dari URL query param, contoh: ?id=123&nama=Budi
     function getQueryParams() {
       const params = {};
       window.location.search.substring(1).split("&").forEach(pair => {
@@ -135,8 +137,13 @@
         return;
       }
 
+      if (!params.id || !params.nama) {
+        status.textContent = "❗ID dan Nama harus ada di URL.";
+        return;
+      }
+
       const formData = new FormData(form);
-      const query = new URLSearchParams(formData).toString();
+      const queryString = new URLSearchParams(formData).toString();
 
       status.textContent = "Mengirim data...";
 
@@ -148,7 +155,7 @@
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: query
+            body: queryString,
           }
         );
 
