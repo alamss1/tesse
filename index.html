@@ -46,7 +46,7 @@
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
-      white-space: nowrap; /* Mencegah teks terpotong ke bawah */
+      white-space: nowrap;
       text-align: center;
     }
     .toggle-btn.active {
@@ -84,6 +84,10 @@
         <div id="btnPulang" class="toggle-btn">Tidak Absen Pulang</div>
       </div>
 
+      <!-- Hidden input untuk nilai absen -->
+      <input type="hidden" name="absenMasuk" value="tidak" />
+      <input type="hidden" name="absenPulang" value="tidak" />
+
       <button type="submit">Proses</button>
     </form>
     <p id="status"></p>
@@ -92,7 +96,6 @@
   <script>
     const form = document.getElementById('absenForm');
     const status = document.getElementById('status');
-
     const btnMasuk = document.getElementById('btnMasuk');
     const btnPulang = document.getElementById('btnPulang');
 
@@ -102,49 +105,49 @@
     btnMasuk.addEventListener('click', () => {
       masukAktif = !masukAktif;
       btnMasuk.classList.toggle('active', masukAktif);
+      form.absenMasuk.value = masukAktif ? "ya" : "tidak";
     });
 
     btnPulang.addEventListener('click', () => {
       pulangAktif = !pulangAktif;
       btnPulang.classList.toggle('active', pulangAktif);
+      form.absenPulang.value = pulangAktif ? "ya" : "tidak";
     });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       if (!masukAktif && !pulangAktif) {
         status.textContent = "❗Pilih minimal satu jenis absen.";
         return;
       }
 
-      const data = {
-        id: form.id.value,
-        nama: form.nama.value,
-        jenis: []
-      };
-
-      if (masukAktif) data.jenis.push("masuk");
-      if (pulangAktif) data.jenis.push("pulang");
+      const formData = new FormData(form);
+      const query = new URLSearchParams(formData).toString();
 
       status.textContent = "Mengirim data...";
 
       try {
         const res = await fetch(
-          'https://script.google.com/macros/s/AKfycbwLJpoqtRdnsBXyQQL2XYy4jqNBewHoTZ2rp-CJSUvUWWXoOYL_jK_NReAeKyYFxs_3/exec',
+          'https://script.google.com/macros/s/AKfycbyFjQIMB7GOLOqrD_iedwLodglxeF2vXAHW0w05awyy-kh6LOBgnk5p8ZN7WD2HLylF/exec',
           {
             method: 'POST',
-            body: JSON.stringify(data),
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: query
           }
         );
 
         if (res.ok) {
           status.textContent = "✅ Data berhasil dikirim!";
           form.reset();
-          // Reset toggle
           masukAktif = false;
           pulangAktif = false;
           btnMasuk.classList.remove('active');
           btnPulang.classList.remove('active');
+          form.absenMasuk.value = "tidak";
+          form.absenPulang.value = "tidak";
         } else {
           status.textContent = "❌ Gagal mengirim data.";
         }
