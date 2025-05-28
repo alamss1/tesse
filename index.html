@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Absen Khusus Puskesmas</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    input[type="text"], button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .toggle-btn {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap; /* Mencegah teks terpotong ke bawah */
+      text-align: center;
+    }
+    .toggle-btn.active {
+      background-color: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    button[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Absen Khusus Puskesmas</h2>
+    <form id="absenForm">
+      <input type="text" name="id" placeholder="ID" required />
+      <input type="text" name="nama" placeholder="Nama" required />
+
+      <div class="toggle-group">
+        <div id="btnMasuk" class="toggle-btn">Tidak Absen Masuk</div>
+        <div id="btnPulang" class="toggle-btn">Tidak Absen Pulang</div>
+      </div>
+
+      <button type="submit">Proses</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('absenForm');
+    const status = document.getElementById('status');
+
+    const btnMasuk = document.getElementById('btnMasuk');
+    const btnPulang = document.getElementById('btnPulang');
+
+    let masukAktif = false;
+    let pulangAktif = false;
+
+    btnMasuk.addEventListener('click', () => {
+      masukAktif = !masukAktif;
+      btnMasuk.classList.toggle('active', masukAktif);
+    });
+
+    btnPulang.addEventListener('click', () => {
+      pulangAktif = !pulangAktif;
+      btnPulang.classList.toggle('active', pulangAktif);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!masukAktif && !pulangAktif) {
+        status.textContent = "❗Pilih minimal satu jenis absen.";
+        return;
+      }
+
+      const data = {
+        id: form.id.value,
+        nama: form.nama.value,
+        jenis: []
+      };
+
+      if (masukAktif) data.jenis.push("masuk");
+      if (pulangAktif) data.jenis.push("pulang");
+
+      status.textContent = "Mengirim data...";
+
+      try {
+        const res = await fetch(
+          'https://script.google.com/macros/s/AKfycbxuB8G_rkToRMnOiBaKq2xexOLzstPOUm7mRgObYRnbAoiMKGcnBeGT1TtXccc29pNn/exec',
+          {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+
+        if (res.ok) {
+          status.textContent = "✅ Data berhasil dikirim!";
+          form.reset();
+          // Reset toggle
+          masukAktif = false;
+          pulangAktif = false;
+          btnMasuk.classList.remove('active');
+          btnPulang.classList.remove('active');
+        } else {
+          status.textContent = "❌ Gagal mengirim data.";
+        }
+      } catch (error) {
+        console.error(error);
+        status.textContent = "⚠️ Terjadi kesalahan jaringan.";
+      }
+    });
+  </script>
+</body>
+</html>
