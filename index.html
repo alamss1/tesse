@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Absen Khusus Puskesmas</title>
   <style>
     body {
@@ -24,6 +24,9 @@
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 5px;
+    }
+    input[readonly] {
+      background-color: #e9ecef;
     }
     h2 {
       text-align: center;
@@ -76,15 +79,14 @@
   <div class="container">
     <h2>Absen Khusus Puskesmas</h2>
     <form id="absenForm">
-      <input type="text" name="id" placeholder="ID" required />
-      <input type="text" name="nama" placeholder="Nama" required />
+      <input type="text" name="id" id="inputId" readonly />
+      <input type="text" name="nama" id="inputNama" readonly />
 
       <div class="toggle-group">
         <div id="btnMasuk" class="toggle-btn">Tidak Absen Masuk</div>
         <div id="btnPulang" class="toggle-btn">Tidak Absen Pulang</div>
       </div>
 
-      <!-- Hidden input untuk nilai absen -->
       <input type="hidden" name="absenMasuk" value="tidak" />
       <input type="hidden" name="absenPulang" value="tidak" />
 
@@ -94,6 +96,14 @@
   </div>
 
   <script>
+    // Ambil id & nama dari URL
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+    const id = pathParts[0] || "";
+    const nama = pathParts[1] ? decodeURIComponent(pathParts[1]) : "";
+
+    document.getElementById("inputId").value = id;
+    document.getElementById("inputNama").value = nama;
+
     const form = document.getElementById('absenForm');
     const status = document.getElementById('status');
     const btnMasuk = document.getElementById('btnMasuk');
@@ -129,7 +139,7 @@
 
       try {
         const res = await fetch(
-          'https://script.google.com/macros/s/AKfycbyFjQIMB7GOLOqrD_iedwLodglxeF2vXAHW0w05awyy-kh6LOBgnk5p8ZN7WD2HLylF/exec',
+          'https://script.google.com/macros/s/AKfycbxuB8G_rkToRMnOiBaKq2xexOLzstPOUm7mRgObYRnbAoiMKGcnBeGT1TtXccc29pNn/exec',
           {
             method: 'POST',
             headers: {
@@ -141,7 +151,6 @@
 
         if (res.ok) {
           status.textContent = "✅ Data berhasil dikirim!";
-          form.reset();
           masukAktif = false;
           pulangAktif = false;
           btnMasuk.classList.remove('active');
