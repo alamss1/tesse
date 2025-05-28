@@ -108,8 +108,8 @@
       <input type="hidden" name="absenMasuk" value="tidak" />
       <input type="hidden" name="absenPulang" value="tidak" />
 
-      <label for="inputKet">Keterangan (opsional)</label>
-      <textarea name="keterangan" id="inputKet" rows="3" placeholder="Misal: lupa absen karena dinas luar..."></textarea>
+      <label for="inputKet">Keterangan</label>
+      <textarea name="keterangan" id="inputKet" rows="3" placeholder="Contoh : Dinas Luar / Posyandu / dll. . ."></textarea>
 
       <button type="submit">Proses</button>
       <p id="status"></p>
@@ -185,7 +185,7 @@
 
       try {
         const res = await fetch(
-          'https://script.google.com/macros/s/AKfycbxlGRUo7e0pqA1Is1GuRV7nt96csrFGbeBJAUJIESF1TeES8kJmnhbEWohM_N3CAJTD/exec',
+          'https://script.google.com/macros/s/AKfycbwm1aa9A87_Y2smsxGEtwmlmOC2aPnE5qGmCCWQKZ_On0xFexpETcfGILL_FU66xjoo/exec',
           {
             method: 'POST',
             headers: {
