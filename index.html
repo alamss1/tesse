@@ -37,15 +37,15 @@
     input[readonly] {
       background-color: #e9ecef;
     }
+
     .toggle-group {
       display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 15px 0;
+      justify-content: space-between;
+      margin: 8px 0;
     }
     .toggle-btn {
-      flex: 1;
-      padding: 12px;
+      flex: 0 0 45%;
+      padding: 8px;
       border: 2px solid #ccc;
       border-radius: 5px;
       background-color: #fff;
@@ -53,15 +53,15 @@
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
-      white-space: nowrap;
       text-align: center;
-      user-select: none;
+      font-size: 13px;
     }
     .toggle-btn.active {
       background-color: #28a745;
       color: white;
       border-color: #28a745;
     }
+
     button[type="submit"] {
       background-color: #007bff;
       color: white;
@@ -73,6 +73,7 @@
     button[type="submit"]:hover {
       background-color: #0056b3;
     }
+
     #status {
       text-align: center;
       margin-top: 12px;
@@ -104,12 +105,11 @@
   </div>
 
   <script>
-    // Ambil id & nama dari URL, contoh: ?id=1&nama=Dr.%20Cynthia
     function getQueryParams() {
       const params = {};
       window.location.search.substring(1).split("&").forEach(pair => {
         const [key, value] = pair.split("=");
-        if(key) params[key] = decodeURIComponent(value || "");
+        if (key) params[key] = decodeURIComponent(value || "");
       });
       return params;
     }
@@ -121,7 +121,6 @@
     inputId.value = params.id || "";
     inputNama.value = params.nama || "";
 
-    // Jika tidak ada id & nama di URL, aktifkan input
     if (!params.id) inputId.removeAttribute("readonly");
     if (!params.nama) inputNama.removeAttribute("readonly");
 
