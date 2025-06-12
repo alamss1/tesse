@@ -160,6 +160,12 @@
         return;
       }
 
+      const keterangan = form.keterangan.value.trim();
+      if (!keterangan) {
+        status.textContent = "❗Keterangan kegiatan wajib diisi.";
+        return;
+      }
+
       const formData = new FormData(form);
       const queryString = new URLSearchParams(formData).toString();
 
