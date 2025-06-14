@@ -1,205 +1,105 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Absen Khusus Puskesmas Pagak</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: url('https://postimage.me/images/2025/06/04/puskespagak.png') no-repeat center center fixed;
-      background-size: cover;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      max-width: 420px;
-      width: 100%;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #333;
-    }
-    input[type="text"], button, textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-      font-size: 14px;
-    }
-    input[readonly] {
-      background-color: #e9ecef;
-    }
-
-    .toggle-group {
-      display: flex;
-      justify-content: space-between;
-      margin: 8px 0;
-    }
-    .toggle-btn {
-      flex: 0 0 40%;
-      padding: 8px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-      background-color: #fff;
-      color: #333;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-      text-align: center;
-      font-size: 13px;
-    }
-    .toggle-btn.active {
-      background-color: #28a745;
-      color: white;
-      border-color: #28a745;
-    }
-
-    button[type="submit"] {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button[type="submit"]:hover {
-      background-color: #0056b3;
-    }
-
-    #status {
-      text-align: center;
-      margin-top: 12px;
-      font-weight: bold;
-      color: #333;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>Absen Khusus Puskesmas Pagak</h2>
-    <form id="absenForm">
-      <input type="text" name="id" id="inputId" readonly placeholder="ID" />
-      <input type="text" name="nama" id="inputNama" readonly placeholder="Nama" />
-
-      <div class="toggle-group">
-        <div id="btnMasuk" class="toggle-btn">Absen Masuk Khusus</div>
-        <div id="btnPulang" class="toggle-btn">Absen Pulang Khusus</div>
-      </div>
-
-      <input type="hidden" name="absenMasuk" value="tidak" />
-      <input type="hidden" name="absenPulang" value="tidak" />
-
-      <textarea name="keterangan" placeholder="Keterangan Kegiatan"></textarea>
-
-      <button type="submit">Proses</button>
-      <p id="status"></p>
-    </form>
-  </div>
-
-  <script>
-    function getQueryParams() {
-      const params = {};
-      window.location.search.substring(1).split("&").forEach(pair => {
-        const [key, value] = pair.split("=");
-        if (key) params[key] = decodeURIComponent(value || "");
-      });
-      return params;
-    }
-
-    const params = getQueryParams();
-    const inputId = document.getElementById("inputId");
-    const inputNama = document.getElementById("inputNama");
-
-    inputId.value = params.id || "";
-    inputNama.value = params.nama || "";
-
-    if (!params.id) inputId.removeAttribute("readonly");
-    if (!params.nama) inputNama.removeAttribute("readonly");
-
-    const form = document.getElementById('absenForm');
-    const status = document.getElementById('status');
-    const btnMasuk = document.getElementById('btnMasuk');
-    const btnPulang = document.getElementById('btnPulang');
-
-    let masukAktif = false;
-    let pulangAktif = false;
-
-    btnMasuk.addEventListener('click', () => {
-      masukAktif = !masukAktif;
-      btnMasuk.classList.toggle('active', masukAktif);
-      form.absenMasuk.value = masukAktif ? "ya" : "tidak";
+<script>
+  function getQueryParams() {
+    const params = {};
+    window.location.search.substring(1).split("&").forEach(pair => {
+      const [key, value] = pair.split("=");
+      if (key) params[key] = decodeURIComponent(value || "");
     });
+    return params;
+  }
 
-    btnPulang.addEventListener('click', () => {
-      pulangAktif = !pulangAktif;
-      btnPulang.classList.toggle('active', pulangAktif);
-      form.absenPulang.value = pulangAktif ? "ya" : "tidak";
-    });
+  const params = getQueryParams();
+  const inputId = document.getElementById("inputId");
+  const inputNama = document.getElementById("inputNama");
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  inputId.value = params.id || "";
+  inputNama.value = params.nama || "";
 
-      if (!masukAktif && !pulangAktif) {
-        status.textContent = "❗Pilih minimal satu jenis absen.";
-        return;
-      }
+  if (!params.id) inputId.removeAttribute("readonly");
+  if (!params.nama) inputNama.removeAttribute("readonly");
 
-      if (!inputId.value || !inputNama.value) {
-        status.textContent = "❗ID dan Nama harus diisi.";
-        return;
-      }
+  const form = document.getElementById('absenForm');
+  const status = document.getElementById('status');
+  const btnMasuk = document.getElementById('btnMasuk');
+  const btnPulang = document.getElementById('btnPulang');
 
-      const keterangan = form.keterangan.value.trim();
-      if (!keterangan) {
-        status.textContent = "❗Keterangan kegiatan wajib diisi.";
-        return;
-      }
+  btnMasuk.addEventListener('click', () => {
+    // Toggle on
+    const isActive = btnMasuk.classList.contains('active');
+    if (!isActive) {
+      btnMasuk.classList.add('active');
+      btnPulang.classList.remove('active');
+      form.absenMasuk.value = "ya";
+      form.absenPulang.value = "tidak";
+    } else {
+      // If already active, untoggle
+      btnMasuk.classList.remove('active');
+      form.absenMasuk.value = "tidak";
+    }
+  });
 
-      const formData = new FormData(form);
-      const queryString = new URLSearchParams(formData).toString();
+  btnPulang.addEventListener('click', () => {
+    const isActive = btnPulang.classList.contains('active');
+    if (!isActive) {
+      btnPulang.classList.add('active');
+      btnMasuk.classList.remove('active');
+      form.absenPulang.value = "ya";
+      form.absenMasuk.value = "tidak";
+    } else {
+      btnPulang.classList.remove('active');
+      form.absenPulang.value = "tidak";
+    }
+  });
 
-      status.textContent = "Mengirim data...";
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      try {
-        const res = await fetch(
-          'https://script.google.com/macros/s/AKfycbwm1aa9A87_Y2smsxGEtwmlmOC2aPnE5qGmCCWQKZ_On0xFexpETcfGILL_FU66xjoo/exec',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: queryString,
-          }
-        );
+    if (form.absenMasuk.value === "tidak" && form.absenPulang.value === "tidak") {
+      status.textContent = "❗Pilih salah satu jenis absen.";
+      return;
+    }
 
-        if (res.ok) {
-          status.textContent = "✅ Data berhasil dikirim!";
-          masukAktif = false;
-          pulangAktif = false;
-          btnMasuk.classList.remove('active');
-          btnPulang.classList.remove('active');
-          form.absenMasuk.value = "tidak";
-          form.absenPulang.value = "tidak";
-          form.keterangan.value = "";
-        } else {
-          status.textContent = "❌ Gagal mengirim data.";
+    if (!inputId.value || !inputNama.value) {
+      status.textContent = "❗ID dan Nama harus diisi.";
+      return;
+    }
+
+    const keterangan = form.keterangan.value.trim();
+    if (!keterangan) {
+      status.textContent = "❗Keterangan kegiatan wajib diisi.";
+      return;
+    }
+
+    const formData = new FormData(form);
+    const queryString = new URLSearchParams(formData).toString();
+
+    status.textContent = "Mengirim data...";
+
+    try {
+      const res = await fetch(
+        'https://script.google.com/macros/s/AKfycbwm1aa9A87_Y2smsxGEtwmlmOC2aPnE5qGmCCWQKZ_On0xFexpETcfGILL_FU66xjoo/exec',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: queryString,
         }
-      } catch (error) {
-        console.error(error);
-        status.textContent = "⚠️ Terjadi kesalahan jaringan.";
+      );
+
+      if (res.ok) {
+        status.textContent = "✅ Data berhasil dikirim!";
+        btnMasuk.classList.remove('active');
+        btnPulang.classList.remove('active');
+        form.absenMasuk.value = "tidak";
+        form.absenPulang.value = "tidak";
+        form.keterangan.value = "";
+      } else {
+        status.textContent = "❌ Gagal mengirim data.";
       }
-    });
-  </script>
-</body>
-</html>
+    } catch (error) {
+      console.error(error);
+      status.textContent = "⚠️ Terjadi kesalahan jaringan.";
+    }
+  });
+</script>
